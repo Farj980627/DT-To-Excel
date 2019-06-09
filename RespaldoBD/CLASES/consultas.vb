@@ -1,5 +1,6 @@
 ﻿Imports MySql.Data.MySqlClient
 Imports ClosedXML.Excel
+
 Public Class consultas
     Public Shared Function getProductos() As DataTable
         Try
@@ -36,10 +37,10 @@ Public Class consultas
                     If name = True Or brand = True Or type = True Then
                         where = where & " AND model=" & "'" & Form1.modelo & "'"
                     Else
-                        where = "model=" & "'" & Form1.nombre & "'"
+                        where = "model=" & "'" & Form1.modelo & "'"
                     End If
                 End If
-                MsgBox(where)
+
             End If
             Dim cmd As MySqlCommand = New MySqlCommand(String.Format("SELECT * FROM products WHERE " + where + " "), con)
             Dim adap As New MySqlDataAdapter(cmd)
@@ -62,6 +63,28 @@ Public Class consultas
         Return dt
 
     End Function
+    Public Shared Function getAll() As DataTable
+        Dim con As MySqlConnection = conexion.conection
+        Dim dt As New DataTable
+        Dim cmd As MySqlCommand = New MySqlCommand(String.Format("SELECT * FROM products"), con)
+        Dim adap As New MySqlDataAdapter(cmd)
+        adap.Fill(dt)
+        con.Close()
+        Return dt
+
+    End Function
+
+    Public Shared Sub saveDB()
+        Dim conn As MySqlConnection = conexion.conection
+        Dim cmd As MySqlCommand = New MySqlCommand
+        cmd.Connection = conn
+        Dim namae As String = InputBox("Nombre del Backup?")
+        Dim user As String = Environment.UserName
+        Dim mb As MySqlBackup = New MySqlBackup(cmd)
+        mb.ExportToFile("C:\users/" & user & "/documents/" & namae & ".sql")
+        conn.Close()
+
+    End Sub
 
 
 
